@@ -6,6 +6,7 @@ require github.com/gin-gonic/gin v1.10.0
 
 require (
 	github.com/MicahParks/jwkset v0.8.0 // indirect
+	github.com/lmittmann/tint v1.0.7 // indirect
 	golang.org/x/time v0.9.0 // indirect
 )
 

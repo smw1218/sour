@@ -5,14 +5,17 @@ features can just be done optionally. The goal is to make it trivially easy to b
 to server REST APIs at a small scale.
 
 ## Features
-* Project Structure Helpers
-* Zero-conf local development
-* Build and Deployment Helpers
-* JWT-based auth integration and helpers
-* Error response helpers
-* OpenTelemetry integration?
-* OpenAPI integration?
-* Client Helpers
+* Project Structure Helpers (TODO)
+* Zero-conf local development (Partial)
+* Build and Deployment Helpers (TODO)
+* JWT-based auth integration and helpers (Partial)
+* Error response helpers (Done)
+* Deployment Environment/Local support (Done)
+* Reasonable logging (WIP)
+* Graceful shutdown (TODO)
+* OpenTelemetry integration? (TODO)
+* OpenAPI integration? (TODO)
+* Client Helpers (TODO)
 
 ## Opinions
 Strong opinions weakly held :D
@@ -38,8 +41,6 @@ Strong opinions weakly held :D
     * Closures capturing the dependencies into scope is a mess and hard to read/debug
     * Dependencies are initialized at boot and injected into individual structs that have handler methods
     * Each struct can have multiple handlers for domain-based organization
-
-
 
 ## Motivation
 I've had to build out something similar to this at three different startups, and each time I had to start over
