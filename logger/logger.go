@@ -10,17 +10,22 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/lmittmann/tint"
+	"github.com/smw1218/sour/env"
 )
 
-func SetupDefaultSlog(serviceName string) {
+func SetupDefaultSlog(serviceName string) *slog.Logger {
+	defaultLevel := slog.LevelDebug
+	if env.Get().IsProd() {
+		defaultLevel = slog.LevelInfo
+	}
 	slogger := slog.New(
 		tint.NewHandler(log.Default().Writer(),
 			&tint.Options{
-				Level:      slog.LevelDebug,
+				Level:      defaultLevel,
 				TimeFormat: "2006-01-02 15:04:05.000",
 			}))
 	slogger = slogger.With("svc", serviceName)
-	slog.SetDefault(slogger)
+	return slogger
 }
 
 type contextLogger string

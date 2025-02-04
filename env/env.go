@@ -1,7 +1,6 @@
 package env
 
 import (
-	"log/slog"
 	"os"
 )
 
@@ -33,7 +32,6 @@ func ReadFromEnv() {
 
 // to lock or not to lock, that is the question
 func setEnv(e Env) {
-	slog.Info("Deployment Env", "env", e)
 	env = e
 }
 
