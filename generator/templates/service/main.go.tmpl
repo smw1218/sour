@@ -1,0 +1,37 @@
+package main
+
+import (
+	"context"
+	"fmt"
+	"log/slog"
+	"os"
+
+	"{{.Package}}/cmd/{{.ServiceName}}-service/app"
+	"github.com/smw1218/sour/env"
+	"github.com/smw1218/sour/logger"
+	"github.com/smw1218/sour/service"
+)
+
+const (
+	serviceName = "{{.ServiceName}}"
+	port        = {{.Port}}
+)
+
+func main() {
+	// override me if desired
+	env.Init()
+	slogger := logger.SetupDefaultSlog(serviceName)
+	slog.SetDefault(slogger)
+
+	engine := service.Engine(slogger)
+	svc := app.New{{.TitleName}}Service(serviceName, port)
+	err := svc.Setup()
+	if err != nil {
+		slog.Error("Failed Service Setup", "error", err)
+		os.Exit(1)
+	}
+
+	svc.RegisterRoutes(engine)
+	service.Run(context.Background(), svc, engine)
+	slog.Info(fmt.Sprintf("%v exiting", svc.LongName()))
+}

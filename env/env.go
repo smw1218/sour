@@ -16,6 +16,10 @@ var EnvVar = "DEPLOYMENT_ENVIRONMENT"
 
 var env Env
 
+func Init() {
+	ReadFromEnv()
+}
+
 // ReadFromEnv will set the internal env value to
 // what is set in the EnvVar environment variable.
 // This is not thread safe and should only be set

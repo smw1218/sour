@@ -1,0 +1,28 @@
+package app
+
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/smw1218/sour/service"
+)
+
+type {{.ServiceType}} struct {
+	service.Template
+}
+
+// New{{.ServiceType}} should keep this signature and never return
+// errors. It will be automatically  
+func New{{.ServiceType}}(name string, port int) *{{.ServiceType}} {
+	return &{{.ServiceType}}{
+		Template: service.NewTemplate(name, port),
+	}
+}
+
+// Setup initialize the service dependencies here
+// returning error will cause the service to exit with code 1
+func (ts *{{.ServiceType}}) Setup() error {
+	return nil
+}
+
+func (ts *{{.ServiceType}}) RegisterRoutes(router gin.IRouter) {
+	
+}
