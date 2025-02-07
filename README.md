@@ -21,6 +21,7 @@ to server REST APIs at a small scale.
 ## Opinions
 Strong opinions weakly held :D
 
+* Convention over configuration
 * Local environment is the most important environment and it should work by default and be easy to use
     * With no configs, `go run main.go` should start a running service
         * Hosted envs should be the ones that are explicitly configured

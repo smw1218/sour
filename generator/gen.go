@@ -2,6 +2,7 @@ package generator
 
 import (
 	"embed"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -20,6 +21,8 @@ var serviceTemplates embed.FS
 
 var mainTmpl *template.Template
 var appTmpl *template.Template
+var proxyTmpl *template.Template
+var allServicesTmpl *template.Template
 
 func init() {
 	var err error
@@ -28,6 +31,14 @@ func init() {
 		log.Fatalln(err)
 	}
 	appTmpl, err = template.ParseFS(serviceTemplates, "templates/service/service.go.tmpl")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	proxyTmpl, err = template.ParseFS(serviceTemplates, "templates/service/proxymain.go.tmpl")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	allServicesTmpl, err = template.ParseFS(serviceTemplates, "templates/service/allservices.go.tmpl")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -61,8 +72,16 @@ func (sd *ServiceData) TitleName() string {
 	return upper
 }
 
+func (sd *ServiceData) PackageAlias() string {
+	return strings.ReplaceAll(sd.ServiceName, "-", "")
+}
+
 func (sd *ServiceData) ServiceType() string {
 	return sd.TitleName() + "Service"
+}
+
+func (sd *ServiceData) CmdDirectory(others ...string) string {
+	return path.Join(slices.Concat([]string{".", "cmd"}, others)...)
 }
 
 func (sd *ServiceData) ServiceDirectory(others ...string) string {
@@ -81,6 +100,38 @@ func (sd *ServiceData) CreateService() error {
 	if err != nil {
 		return err
 	}
+	return sd.createProxy()
+}
+
+func (sd *ServiceData) createProxy() error {
+	mainPath := path.Join(sd.CmdDirectory("local-proxy", "main.go"))
+	_, err := os.Stat(mainPath)
+	if errors.Is(err, os.ErrNotExist) {
+		err := sd.doTemplate(proxyTmpl, mainPath)
+		if err != nil {
+			return err
+		}
+	} else if err != nil {
+		return err
+	}
+
+	allSvcs := path.Join(sd.CmdDirectory("local-proxy", "servicelist", "services.go"))
+	_, err = os.Stat(allSvcs)
+	if errors.Is(err, os.ErrNotExist) {
+		err := sd.doTemplate(allServicesTmpl, allSvcs)
+		if err != nil {
+			return err
+		}
+	} else if err != nil {
+		return err
+	}
+
+	// add the service to the empty template
+	err = sd.modifyProxyList(allSvcs)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

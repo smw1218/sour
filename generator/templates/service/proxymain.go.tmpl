@@ -1,0 +1,11 @@
+package main
+
+import (
+	"{{.Package}}/cmd/local-proxy/servicelist"
+	"github.com/smw1218/sour/proxy"
+)
+
+func main() {
+	p := proxy.NewProxyCLI(servicelist.AllServices)
+	p.Execute()
+}

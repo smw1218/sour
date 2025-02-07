@@ -5,15 +5,27 @@ import (
 	"github.com/smw1218/sour/service"
 )
 
+const (
+	serviceName = "{{.ServiceName}}"
+	port        = {{.Port}}
+)
+
+// {{.ServiceType}} is a holder for any dependencies
+// needed for the routes. It will typically contain
+// controllers and authenticators, which in turn
+// may need references to database or other
+// clients. These should be initialized in
+// [{{.ServiceType}}.Setup].
 type {{.ServiceType}} struct {
 	service.Template
 }
 
-// New{{.ServiceType}} should keep this signature and never return
-// errors. It will be automatically  
-func New{{.ServiceType}}(name string, port int) *{{.ServiceType}} {
+// New{{.ServiceType}} must keep this signature and never fail
+// or return errors. It will be called by generated code.
+// For initializing things, use [{{.ServiceType}}.Setup] instead.
+func New{{.ServiceType}}() *{{.ServiceType}} {
 	return &{{.ServiceType}}{
-		Template: service.NewTemplate(name, port),
+		Template: service.NewTemplate(serviceName, port),
 	}
 }
 
@@ -23,6 +35,12 @@ func (ts *{{.ServiceType}}) Setup() error {
 	return nil
 }
 
+// RegisterRoutes is called after [{{.ServiceType}}.Setup] in normal operation,
+// but it also called directly after [New{{.ServiceType}}] in
+// cases where we want to introspect, but not execute the routes.
+// Code in here should be careful not to derefernce struct fields
+// that may be null. It is expected to dereference methods because
+// methods exist on nil and zero-value types.
 func (ts *{{.ServiceType}}) RegisterRoutes(router gin.IRouter) {
 	
 }

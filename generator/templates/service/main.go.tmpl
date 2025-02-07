@@ -12,19 +12,14 @@ import (
 	"github.com/smw1218/sour/service"
 )
 
-const (
-	serviceName = "{{.ServiceName}}"
-	port        = {{.Port}}
-)
-
 func main() {
 	// override me if desired
 	env.Init()
-	slogger := logger.SetupDefaultSlog(serviceName)
+	svc := app.New{{.TitleName}}Service()
+	slogger := logger.SetupDefaultSlog(svc.Name())
 	slog.SetDefault(slogger)
 
 	engine := service.Engine(slogger)
-	svc := app.New{{.TitleName}}Service(serviceName, port)
 	err := svc.Setup()
 	if err != nil {
 		slog.Error("Failed Service Setup", "error", err)
