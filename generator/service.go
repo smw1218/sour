@@ -136,6 +136,10 @@ func (sd *ServiceData) createProxy() error {
 }
 
 func (sd *ServiceData) doTemplate(tmpl *template.Template, outpath string) error {
+	return doTemplate(sd, tmpl, outpath)
+}
+
+func doTemplate(data any, tmpl *template.Template, outpath string) error {
 	_, err := os.Stat(outpath)
 	if err == nil {
 		return fmt.Errorf("%v already exists; not overwriting", outpath)
@@ -149,7 +153,7 @@ func (sd *ServiceData) doTemplate(tmpl *template.Template, outpath string) error
 		return fmt.Errorf("failed to create %v: %w", outpath, err)
 	}
 	defer f.Close()
-	err = tmpl.Execute(f, sd)
+	err = tmpl.Execute(f, data)
 	if err != nil {
 		return fmt.Errorf("failed executing template for %v: %w", outpath, err)
 	}

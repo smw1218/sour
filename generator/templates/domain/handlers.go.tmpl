@@ -1,0 +1,25 @@
+package {{.DomainPackage}}
+
+import (
+	"github.com/gin-gonic/gin"
+)
+
+// New{{.DomainName}}Handlers call in app.{{.ServiceType}}.Setup
+// inject any needed required dependencies. The signature of this
+// method is flexible.
+func New{{.DomainName}}Handlers() (*{{.DomainName}}Handlers, error) {
+	return &{{.DomainName}}Handlers{}, nil
+}
+
+// {{.DomainName}}Handlers holds dependencies to be used in
+// handler methods
+type {{.DomainName}}Handlers struct {
+}
+
+// Hello example handler method; delete or modify as you like. 
+// Add these functions in app.{{.ServiceType}}.RegisterRoutes:
+//
+//	router.GET("/hello", {{.DomainPackage}}.Hello)
+func ({{.DomainInitials}}h *{{.DomainName}}Handlers) Hello(c *gin.Context) {
+	c.JSON(200, map[string]string{"hello": "world"})
+}

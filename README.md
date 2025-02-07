@@ -1,19 +1,39 @@
 # Sour
 
-Sour is an opinionated microservices "framework" for go. I put "framework" in scare quotes because most of the
-features can just be done optionally. The goal is to make it trivially easy to build a Go-based microservices
-to server REST APIs at a small scale.
+Sour is an opinionated microservices framework for go. The goal is to make it trivially easy to build a Go-based microservices to server REST APIs at a small scale. [Even small teams can take advantage of microservices](https://www.scottwhite.dev/posts/microservices-for-startups/) and they don't need to be hard if you use some reasonable conventions. Sour can just as easily make a monolith by just making one service.  
+
+Sour's helpers encourage using this [project structure](https://www.scottwhite.dev/posts/go-project-structure/).
+
+## QuickStart
+```
+mkdir <your project>; cd <your project>
+go mod init <your module>
+go install github.com/smw1218/sour@latest
+# service name is "music"
+sour service --name music
+# domain name is "Albums"
+sour service --name music --domain Albums
+```
+
+## WTF is a Domain
+This is something that you business logic code needs to do. In a REST API this would correspond to a group of
+similar handlers in you API. Looking at [Spotify's API](https://developer.spotify.com/documentation/web-api), 
+domains in the API are groups of API calls like: Artists, Albums and Tracks. Sour strongly
+encourages organizing your go packages around domains.
+
+A microservice can have one or more domains. If you want to build a monolith, then all you domains are attached
+to the same service.
 
 ## Features
 
-* Project Structure Helpers (TODO)
+* Project Structure Helpers (Partial)
 * Zero-conf local development (Partial)
 * Build and Deployment Helpers (TODO)
 * JWT-based auth integration and helpers (Partial)
 * Error response helpers (Done)
 * Deployment Environment/Local support (Done)
-* Reasonable logging (WIP)
-* Graceful shutdown (TODO)
+* Reasonable logging (Done)
+* Graceful shutdown (Done)
 * OpenTelemetry integration? (TODO)
 * OpenAPI integration? (TODO)
 * Client Helpers (TODO)
