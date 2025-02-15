@@ -65,5 +65,5 @@ Strong opinions weakly held :D
     * Each struct can have multiple handlers for domain-based organization
 
 ## Motivation
-I've had to build out something similar to this at three different startups, and each time I had to start over
+I've had to build out something similar to this at two different startups, and each time I had to start over
 from scratch. If I open source this I hopefully won't need to do it again.

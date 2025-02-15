@@ -19,7 +19,7 @@ func main() {
 	slogger := logger.SetupDefaultSlog(svc.Name())
 	slog.SetDefault(slogger)
 
-	engine := service.Engine(slogger)
+	engine := service.Engine(slogger, svc)
 	err := svc.Setup()
 	if err != nil {
 		slog.Error("Failed Service Setup", "error", err)

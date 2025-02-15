@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 )
 
@@ -13,8 +15,17 @@ func Run(ctx context.Context, si ServiceInterface, handler http.Handler) {
 	ctx, _ = signal.NotifyContext(ctx, syscall.SIGINT, syscall.SIGTERM)
 	//defer stop() // I don't think stop is needed in this context
 
+	port := si.DefaultPort()
+	overridePort := os.Getenv("SERVICEPORT")
+	if overridePort != "" {
+		parsed, err := strconv.Atoi(overridePort)
+		if err == nil {
+			port = parsed
+		}
+	}
+
 	srv := &http.Server{
-		Addr:    fmt.Sprintf(":%d", si.DefaultPort()),
+		Addr:    fmt.Sprintf(":%d", port),
 		Handler: handler,
 	}
 
