@@ -2,6 +2,7 @@ package project
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"io/fs"
 	"os"
@@ -17,13 +18,22 @@ var DefaultStartingPort = 8080
 
 // GetLastUsedPort returns the last used port for a service
 func GetLastUsedPort() (int, error) {
-	fileSystem := os.DirFS("cmd")
+	return getLastUsedPort(os.DirFS("cmd"))
+}
+
+func getLastUsedPort(fileSystem fs.FS) (int, error) {
 	matchPaths := []string{}
-	fs.WalkDir(fileSystem, ".", func(filePath string, d fs.DirEntry, err error) error {
+	err := fs.WalkDir(fileSystem, ".", func(filePath string, d fs.DirEntry, err error) error {
 		if err != nil {
+			if filePath == "." && errors.Is(err, fs.ErrNotExist) {
+				return nil
+			}
 			return err
 		}
-		match, err := path.Match("*-service/main.go", filePath)
+		if d.IsDir() {
+			return nil
+		}
+		match, err := path.Match("*-service/app/service.go", filePath)
 		if err != nil {
 			return err
 		}
@@ -33,9 +43,12 @@ func GetLastUsedPort() (int, error) {
 		matchPaths = append(matchPaths, filePath)
 		return nil
 	})
+	if err != nil {
+		return 0, err
+	}
 	ports := make([]int, 0, len(matchPaths))
-	for _, mainPath := range matchPaths {
-		port, err := GetPortFromMain(fileSystem, mainPath)
+	for _, servicePath := range matchPaths {
+		port, err := getPortFromFile(fileSystem, servicePath)
 		if err != nil {
 			return 0, err
 		}
@@ -52,9 +65,9 @@ func GetLastUsedPort() (int, error) {
 	return port, nil
 }
 
-var portLineRe = regexp.MustCompile(`\s*port\s*=\s*(\d+)`)
+var portLineRe = regexp.MustCompile(`^\s*(?:const\s+)?port\s*=\s*(\d+)\b`)
 
-func GetPortFromMain(fileSystem fs.FS, filePath string) (int, error) {
+func getPortFromFile(fileSystem fs.FS, filePath string) (int, error) {
 	f, err := fileSystem.Open(filePath)
 	if err != nil {
 		return 0, fmt.Errorf("failed opening %v: %w", filePath, err)
